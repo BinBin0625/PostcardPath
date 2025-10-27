@@ -2,7 +2,20 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
 }
+
+secrets {
+    // Optionally specify a different file name containing your secrets.
+    // The plugin defaults to "local.properties"
+    propertiesFileName = "secrets.properties"
+
+    // A properties file containing default secret values. This file can be
+    // checked in version control.
+    defaultPropertiesFileName = "local.defaults.properties"
+}
+
+
 
 android {
     namespace = "com.cs407.postcardpath"
@@ -68,4 +81,13 @@ dependencies {
     implementation ("com.github.bumptech.glide:glide:4.15.1")
     implementation ("eu.agno3.jcifs:jcifs-ng:2.1.10")
     annotationProcessor ("com.github.bumptech.glide:compiler:4.15.1")
+    implementation("com.google.maps.android:maps-ktx:5.2.0")
+    implementation("com.google.maps.android:maps-utils-ktx:5.2.0")
+    implementation("com.google.maps.android:maps-compose:4.4.1")
+    implementation("com.google.android.gms:play-services-location:21.3.0")
+    implementation("com.google.android.gms:play-services-maps:19.0.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.9.4")
+    implementation("com.google.android.material:material:1.13.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.10.2")
 }
