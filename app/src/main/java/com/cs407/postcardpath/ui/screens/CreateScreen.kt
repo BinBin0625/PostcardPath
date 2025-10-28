@@ -2,8 +2,11 @@ package com.cs407.postcardpath.ui.screens
 
 import android.content.Intent
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -27,6 +30,8 @@ import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.rememberCameraPositionState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.cs407.postcardpath.ui.viewmodels.MapViewModel
@@ -89,7 +94,8 @@ fun CreateScreen(
                 onDismissRequest = {
                     showBottomSheet = false
                 },
-                sheetState = sheetState
+                sheetState = sheetState,
+
             ) {
                 SheetLayout()
             }
@@ -105,31 +111,77 @@ fun SheetLayout() {
 
     Column(
         modifier = Modifier
-            .padding(24.dp),
+            .padding(24.dp)
+            .fillMaxWidth(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Create Screen",
+            text = "Create Path",
             style = MaterialTheme.typography.headlineSmall
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Button(
-            onClick = {
-                val intent = Intent(context, Camera::class.java)
-                context.startActivity(intent)
-            },
-            colors = androidx.compose.material3.ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary
-            ),
-            modifier = Modifier
-                .fillMaxWidth(0.5f)
-                .height(50.dp)
+        Row(
+            horizontalArrangement = Arrangement.Center,
         ) {
-            Text("Open Camera")
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .weight(0.5f)
+            ) {
+
+                Button(
+                    onClick = {
+                        val intent = Intent(context, Camera::class.java)
+                        context.startActivity(intent)
+                    },
+                    colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth(0.5f)
+                        .height(50.dp)
+                ) {
+                    Icon(Icons.Default.Add, "Add Icon")
+                }
+
+                Text(text = "Take a Photo",
+                    fontSize = 20.sp,
+                    modifier = Modifier
+                        .padding(10.dp))
+
+            }
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .weight(0.5f)
+            ) {
+
+                Button(
+                    onClick = {
+                        val intent = Intent(context, Camera::class.java)
+                        context.startActivity(intent)
+                    },
+                    colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth(0.5f)
+                        .height(50.dp)
+                ) {
+                    Icon(Icons.Default.PlayArrow, "Play Icon")
+                }
+
+                Text(text = "Start a Path",
+                    fontSize = 20.sp,
+                    modifier = Modifier
+                        .padding(10.dp))
+
+            }
         }
     }
 }
@@ -137,5 +189,5 @@ fun SheetLayout() {
 @Preview(showBackground = true)
 @Composable
 fun PreviewCreateScreen() {
-    CreateScreen()
+    SheetLayout()
 }
