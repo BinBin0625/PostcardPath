@@ -9,3 +9,4 @@ secrets.properties
 .idea
 app/build
 local.properties
+.kotlin

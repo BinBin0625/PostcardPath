@@ -23,9 +23,10 @@ fun MainPage() {
                 navController = navController,
                 startDestination = "paths"
             ) {
-                composable("paths") { PathsScreen() }
-                composable("create") { CreateScreen() }
+                composable("paths") { CreateScreen(navController) }
+//                composable("create") {  }
                 composable("settings") { SettingsScreen() }
+                composable("takephoto") { TakePhoto() }
             }
         }
     }

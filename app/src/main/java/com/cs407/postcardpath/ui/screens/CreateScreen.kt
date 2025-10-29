@@ -1,44 +1,26 @@
 package com.cs407.postcardpath.ui.screens
 
-import android.content.Intent
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import com.cs407.postcardpath.Camera
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.rememberCameraPositionState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.cs407.postcardpath.ui.viewmodels.MapViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateScreen(
+    navController: NavController,
     viewModel: MapViewModel = viewModel()
 ) {
     val context = LocalContext.current
@@ -67,9 +49,6 @@ fun CreateScreen(
         }
     }
 
-    val sheetState = rememberModalBottomSheetState()
-    var showBottomSheet by remember { mutableStateOf(true) }
-
     // Defines a state object that controls the camera's position on the map
     val initLocation = LatLng(1.35, 103.87) // Hardcoded coordinates (Singapore)
 
@@ -77,117 +56,18 @@ fun CreateScreen(
         modifier = Modifier
             .fillMaxSize()
     ) {
-        // The GoogleMap composable displays the map UI inside your Compose layout
         GoogleMap(
             modifier = Modifier.fillMaxSize(),
             cameraPositionState = cameraPositionState
         )
 
-        Button(
-            onClick = { showBottomSheet = true }
-        ) {
-            Icon(Icons.Default.Add, contentDescription = "Add")
-        }
-
-        if (showBottomSheet) {
-            ModalBottomSheet(
-                onDismissRequest = {
-                    showBottomSheet = false
-                },
-                sheetState = sheetState,
-
-            ) {
-                SheetLayout()
-            }
-        }
-
     }
 }
 
-@Composable
-fun SheetLayout() {
 
-    val context = LocalContext.current
-
-    Column(
-        modifier = Modifier
-            .padding(24.dp)
-            .fillMaxWidth(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = "Create Path",
-            style = MaterialTheme.typography.headlineSmall
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Row(
-            horizontalArrangement = Arrangement.Center,
-        ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .weight(0.5f)
-            ) {
-
-                Button(
-                    onClick = {
-                        val intent = Intent(context, Camera::class.java)
-                        context.startActivity(intent)
-                    },
-                    colors = androidx.compose.material3.ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.onPrimary
-                    ),
-                    modifier = Modifier
-                        .fillMaxWidth(0.5f)
-                        .height(50.dp)
-                ) {
-                    Icon(Icons.Default.Add, "Add Icon")
-                }
-
-                Text(text = "Take a Photo",
-                    fontSize = 20.sp,
-                    modifier = Modifier
-                        .padding(10.dp))
-
-            }
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .weight(0.5f)
-            ) {
-
-                Button(
-                    onClick = {
-                        val intent = Intent(context, Camera::class.java)
-                        context.startActivity(intent)
-                    },
-                    colors = androidx.compose.material3.ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.onPrimary
-                    ),
-                    modifier = Modifier
-                        .fillMaxWidth(0.5f)
-                        .height(50.dp)
-                ) {
-                    Icon(Icons.Default.PlayArrow, "Play Icon")
-                }
-
-                Text(text = "Start a Path",
-                    fontSize = 20.sp,
-                    modifier = Modifier
-                        .padding(10.dp))
-
-            }
-        }
-    }
-}
 
 @Preview(showBackground = true)
 @Composable
 fun PreviewCreateScreen() {
-    SheetLayout()
+    CreateScreen(navController = rememberNavController())
 }

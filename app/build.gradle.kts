@@ -90,4 +90,8 @@ dependencies {
     implementation("com.google.android.material:material:1.13.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.10.2")
+
+    implementation("io.coil-kt.coil3:coil-compose:3.3.0")
+
+    implementation("org.jetbrains.kotlin:kotlin-reflect:${libs.versions.kotlin.get()}")
 }
