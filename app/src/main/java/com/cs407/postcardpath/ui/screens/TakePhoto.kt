@@ -1,14 +1,10 @@
 package com.cs407.postcardpath.ui.screens
 
 import android.Manifest
-import android.app.Activity.RESULT_OK
-import android.content.ContentValues
 import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Environment
-import android.provider.MediaStore
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -24,22 +20,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
-import androidx.core.content.PermissionChecker.PERMISSION_GRANTED
-import androidx.core.net.toUri
-import androidx.navigation.compose.rememberNavController
 import coil3.compose.rememberAsyncImagePainter
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
-import java.util.Locale
-import java.util.Objects
 
 @Composable
 fun TakePhoto() {
@@ -52,35 +40,50 @@ fun TakePhoto() {
     // State to hold a temporary URI while the camera is active
     var tempUri by remember { mutableStateOf<Uri?>(null) }
 
+    // Define the launcher for the camera
     val captureLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.TakePicture(),
+        // What to do once the capture is complete, either successfully or cancelled
         onResult = { success ->
-            Toast.makeText(context, "Image capture: ${if(success) "Successful" else "Failed"}", Toast.LENGTH_SHORT)
+            Toast.makeText(context, "Photo taken: ${if(success) "Successful" else "Failed"}", Toast.LENGTH_SHORT)
                 .show()
             if (success) {
+                // Save the temp URI as the final image URI
                 imageUri = tempUri
+                // TODO actually do something with it
+            } else {
+                // Photo capture failed or was cancelled.
+                // Delete the empty file we created.
+                tempUri?.let { uri ->
+                    context.contentResolver.delete(uri, null, null)
+                }
             }
         }
     )
 
-    fun launchCamera() {
-        // Permission is already granted, launch camera
+    // Launch the camera with a destination file URI
+    fun prepareImageFileAndLaunchCamera() {
+        // Create a new file
         val imageFile = createImageFile(context)
+        // Get the URI for the file
         val uri = FileProvider.getUriForFile(
             context,
-            "${context.packageName!!}.fileprovider", // Authority must match AndroidManifest
+            "${context.packageName}.fileprovider", // Authority must match AndroidManifest
             imageFile
         )
-        tempUri = uri // Save the uri for the camera result
+        // Save the uri for the camera result
+        tempUri = uri
+        // Start the capture session with the URI
         captureLauncher.launch(uri)
     }
 
+    // Launch the permission request with a callback for what to do on user response
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
         onResult = { isGranted ->
             if (isGranted) {
                 // Permission granted, create a new URI and launch the camera
-                launchCamera()
+                prepareImageFileAndLaunchCamera()
             } else {
                 // Permission denied. Show a message or handle accordingly.
                 // TODO
@@ -109,7 +112,8 @@ fun TakePhoto() {
                     // Check if permission is already granted
                     when (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)) {
                         PackageManager.PERMISSION_GRANTED -> {
-                            launchCamera()
+                            // Permission is already granted, launch camera
+                            prepareImageFileAndLaunchCamera()
                         }
                         else -> {
                             // Permission not granted, request it
@@ -126,12 +130,14 @@ fun TakePhoto() {
     }
 }
 
-fun createImageFile(context: Context): File {
+// Create an image file in the app's storage directory
+private fun createImageFile(context: Context): File {
     // Create an image file name
     val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", java.util.Locale.US).format(Date())
     val storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
 
-    // Create the temporary image file
+    // Create the image file
+    // Use createTempFile to guarantee a unique filename. The actual file is not temporary.
     val imageFile = File.createTempFile(
         "JPEG_${timeStamp}_",
         ".jpg",

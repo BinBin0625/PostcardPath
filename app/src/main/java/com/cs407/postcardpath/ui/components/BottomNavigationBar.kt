@@ -32,6 +32,9 @@ import kotlinx.coroutines.withContext
 import kotlin.reflect.KFunction
 import kotlin.reflect.full.hasAnnotation
 
+// This Experimental Opt is silly, but I guess the ModalBottomSheet isn't out of experimental yet
+// (I did try updating Compose, but that broke the icons for reasons (see link below) and didn't remove the experimental requirement)
+// https://www.linkedin.com/posts/sasikanthmiriyampalli_icons-jetpack-compose-android-developers-activity-7377553673826000897-Y5aq
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BottomNavigationBar(navController: NavHostController) {
@@ -42,7 +45,7 @@ fun BottomNavigationBar(navController: NavHostController) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
-
+    // A list of nav buttons and composables to put in the nav bar
     val items = listOf(
         BottomNavItem.BottomNavData("paths", Icons.Default.LocationOn, "Paths"),
         BottomNavItem.ComposableBottomNavItem(
@@ -50,6 +53,7 @@ fun BottomNavigationBar(navController: NavHostController) {
             {
                 Button(
                     onClick = {
+                        // Return to the paths view
                         if (currentRoute != "paths") {
                             navController.navigate("paths")
                         }
@@ -75,6 +79,7 @@ fun BottomNavigationBar(navController: NavHostController) {
         containerColor = PurpleGrey80
     ) {
         items.forEach { item ->
+            // Distinguish between the two types of items
             when (item) {
                 is BottomNavItem.BottomNavData -> {
                     val selected = currentRoute == item.route
@@ -119,6 +124,8 @@ fun BottomNavigationBar(navController: NavHostController) {
                 }
             }
         }
+        // Turns out, if you don't remember to create this if wrapper, the sheet will disappear but still steal all your inputs
+        // We put the sheet in BottomNavigationBar because that's where the button to show it lives
         if (sheetState.isVisible) {
             ModalBottomSheet(
                 onDismissRequest = {
@@ -129,8 +136,7 @@ fun BottomNavigationBar(navController: NavHostController) {
                     }
                 },
                 sheetState = sheetState,
-
-                ) {
+            ) {
                 SheetLayout(navController, sheetState)
             }
 
