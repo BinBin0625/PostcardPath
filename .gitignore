@@ -1,0 +1,12 @@
+# macOS is silly and likes to make these
+.DS_Store
+
+# Keep secrets secret
+secrets.properties
+
+# Android Studio files that are generated or local only and shouldn't be included in git
+.gradle
+.idea
+app/build
+local.properties
+.kotlin

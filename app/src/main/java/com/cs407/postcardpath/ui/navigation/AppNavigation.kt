@@ -6,6 +6,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.cs407.postcardpath.ui.screens.LandingScreen
 import com.cs407.postcardpath.ui.screens.MainPage
+import com.cs407.postcardpath.ui.screens.TakePhoto
 
 @Composable
 fun AppNavigation() {
